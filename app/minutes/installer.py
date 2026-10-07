@@ -227,7 +227,7 @@ def trial_run(home: Path, log: Log) -> dict:
         folder.mkdir()
         zh = synth_speech(folder / "測試 20260101_090000.wav", log)
         exe = venv_minutes(home)
-        out = run([exe, "transcribe", folder, "--json"], log)
+        out = run([exe, "transcribe", folder, "--no-window", "--json"], log)
         result = json.loads(out.strip().splitlines()[-1])
         if not result.get("ok", True):
             raise InstallError(f"試跑轉錄失敗：{result.get('error')}")

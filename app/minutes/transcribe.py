@@ -15,7 +15,7 @@ from pathlib import Path
 import opencc
 from faster_whisper import WhisperModel
 
-from minutes import check, merge, models, recordings
+from minutes import check, merge, models, progress, recordings
 from minutes.paths import TEMP
 
 # evaluate.py 用的別名：模型沒下載到程式資料夾時，交給 faster-whisper 從 Hugging Face 快取抓
@@ -140,7 +140,8 @@ class Engine:
 
 
 def run(folder: Path, model: str = models.DEFAULT, device: str = "auto", log=print, engine=None,
-        probe_fn=recordings.probe) -> dict:
+        probe_fn=recordings.probe, window: bool = False) -> dict:
+    """window：有段落要轉時開進度視窗。進度檔寫好才開，視窗不會讀到上一輪的結果。"""
     if not folder.is_dir():
         raise TranscribeError(f"找不到會議資料夾：{folder}")
     recs = [recordings.describe(p, probe_fn) for p in recordings.audio_files(folder)]
@@ -154,6 +155,20 @@ def run(folder: Path, model: str = models.DEFAULT, device: str = "auto", log=pri
     todo = [r for r in recs if load_cache(r, cache_key(r, model, terms)) is None]
     log(f"共 {len(recs)} 段錄音，{len(recs) - len(todo)} 段之前轉過，這次要轉 {len(todo)} 段。")
 
+    tracker = progress.Tracker(folder, sum(r.duration for r in recs), len(recs))
+    if window and todo:
+        progress.launch_window(folder)
+    try:
+        result = _run(folder, recs, todo, terms, model, device, log, engine, tracker)
+    except BaseException as e:
+        tracker.fail("轉錄被中斷" if isinstance(e, KeyboardInterrupt) else f"{e.__class__.__name__}：{str(e)[:300]}")
+        raise
+    tracker.finish()
+    return result
+
+
+def _run(folder: Path, recs: list, todo: list, terms: list[str], model: str, device: str, log, engine,
+         tracker: progress.Tracker) -> dict:
     prompt, dropped, why = None, [], ""
     if todo:
         chosen, why = check.pick_device(device)
@@ -164,27 +179,30 @@ def run(folder: Path, model: str = models.DEFAULT, device: str = "auto", log=pri
             if dropped:
                 log(f"名單和術語太長，後面 {len(dropped)} 行沒放進提示文字：{'、'.join(dropped)}")
 
-    parts, timings = [], []
+    parts, timings, before = [], [], 0.0  # before：前面幾段的總長，算整場進度用
     for i, r in enumerate(recs, 1):
         key = cache_key(r, model, terms)
         segs = load_cache(r, key)
         if segs is None:
             log(f"第 {i}／{len(recs)} 段開始轉錄：{r.path.name}（長 {recordings.fmt_duration(r.duration)}）")
+            tracker.start_part(i, before)
             last = [time.monotonic()]
 
-            def progress(done: float, total: float, i=i, last=last) -> None:
+            def on_progress(done: float, total: float, i=i, last=last, before=before) -> None:
+                tracker.update(before + done)
                 if time.monotonic() - last[0] >= PROGRESS_EVERY:
                     last[0] = time.monotonic()
                     log(f"第 {i}／{len(recs)} 段：已轉 {recordings.fmt_duration(done)} ／ {recordings.fmt_duration(total)}")
 
             t0 = time.monotonic()
-            segs = engine.run(r.path, prompt, progress)
+            segs = engine.run(r.path, prompt, on_progress)
             elapsed = time.monotonic() - t0
             save_cache(r, key, segs, engine.device, elapsed)
             timings.append({"file": r.path.name, "seconds": round(elapsed, 1),
                             "ratio": round(elapsed / r.duration, 2) if r.duration else None})
             log(f"第 {i}／{len(recs)} 段轉完，花了 {recordings.fmt_duration(elapsed)}。")
         parts.append((r, segs))
+        before += r.duration
 
     devices = {json.loads(cache_path(r).read_text(encoding="utf-8"))["device"] for r in recs}
     used = "cuda" if devices == {"cuda"} else "cpu"

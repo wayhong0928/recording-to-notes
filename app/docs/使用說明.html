@@ -71,6 +71,7 @@ a { color: #0969da; }
 </tbody>
 </table>
 <p>沒有獨立顯示卡的一般筆電沒測過，可能比錄音本身還久。轉的時候可以先去做別的事。</p>
+<p>轉錄時會跳出一個進度視窗，顯示轉到第幾段、百分比、大概還要多久（轉了一分鐘以上、進度超過 5% 才會開始估算）。轉完視窗會自己關掉，中途關掉也不會停止轉錄。想再看進度，直接問 Claude「轉到哪了」，或請它再打開進度視窗。</p>
 <h2>做出來的檔案</h2>
 <p>每場會議一個資料夾，例如 <code>會議\2026-10-06_週會\</code>：</p>
 <table>
@@ -136,7 +137,7 @@ a { color: #0969da; }
 </ul>
 <h2>Windows</h2>
 <ol>
-<li>到 GitHub 頁面按 <strong>Code → Download ZIP</strong>，下載後按右鍵「解壓縮全部」。</li>
+<li>到 GitHub 頁面右邊的 <strong>Releases</strong>，下載最新版的 <code>recording-to-notes-v版本.zip</code>（Windows 和 Mac 是同一個檔），按右鍵「解壓縮全部」。</li>
 <li>打開解壓縮出來的資料夾，雙擊 <strong><code>安裝（Windows）.bat</code></strong>。</li>
 <li>跳出藍色的「Windows 已保護您的電腦」：按「其他資訊」→「仍要執行」。這是因為檔案從網路下載、沒有數位簽章。</li>
 <li>視窗會先列出這台電腦的狀況（顯示卡、硬碟空間、網路、有沒有 Word 和 Claude Code），再列出接下來要裝什麼。確認沒問題就按 Enter。</li>
@@ -149,7 +150,7 @@ a { color: #0969da; }
 <p>Mac 版照同樣的設計寫好了，但<strong>還沒在 Mac 上實際裝過</strong>，有問題請回報。</p>
 </blockquote>
 <ol>
-<li>下載 ZIP、解壓縮。</li>
+<li>跟 Windows 一樣到 Releases 下載 ZIP，雙擊解壓縮。</li>
 <li>雙擊 <strong><code>安裝（Mac）.command</code></strong>。</li>
 <li>被擋下來說「無法打開」：打開「終端機」，輸入 <code>bash</code> （後面有空格），把 <code>安裝（Mac）.command</code> 拖進終端機視窗，按 Enter。</li>
 <li>之後跟 Windows 一樣：看檢查結果、按 Enter、等它跑完。</li>

@@ -24,3 +24,10 @@ def make_wav(path: Path, seconds: float = 1.0) -> Path:
         w.setframerate(16000)
         w.writeframes(b"\0\0" * int(16000 * seconds))
     return path
+
+
+@pytest.fixture(autouse=True)
+def no_progress_window(tmp_path, monkeypatch):
+    """測試不開進度視窗，進度檔寫到暫存資料夾。"""
+    monkeypatch.setenv("MINUTES_NO_WINDOW", "1")
+    monkeypatch.setenv("MINUTES_PROGRESS_DIR", str(tmp_path / "progress"))

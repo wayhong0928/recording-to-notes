@@ -78,6 +78,12 @@ def build_parser(json_argv: bool = False) -> argparse.ArgumentParser:
     p.add_argument("folder", help="會議資料夾")
     p.add_argument("--model", choices=["breeze", "turbo", "large-v3"], default="breeze")
     p.add_argument("--device", choices=["auto", "cuda", "cpu"], default="auto")
+    p.add_argument("--no-window", action="store_true", help="不開進度視窗")
+
+    p = add("progress", "轉錄進度")
+    p.add_argument("folder", help="會議資料夾")
+    p.add_argument("--window", action="store_true", help="打開進度視窗")
+    p.add_argument("--show-window", action="store_true", help=argparse.SUPPRESS)  # 視窗程序自己用
 
     p = add("word-status", "最新一版 Word 產生後有沒有被改過")
     p.add_argument("folder")
@@ -160,13 +166,29 @@ def cmd_transcribe(args) -> int:
 
     log = (lambda msg: print(msg, file=sys.stderr, flush=True)) if args.json else (lambda msg: print(msg, flush=True))
     try:
-        data = transcribe.run(Path(args.folder), args.model, args.device, log=log)
+        data = transcribe.run(Path(args.folder), args.model, args.device, log=log, window=not args.no_window)
     except transcribe.TranscribeError as e:
         return fail(args, str(e))
     except Exception as e:  # 下載模型、解碼這類錯誤，給 Claude 看得懂的一行，細節照印
         return fail(args, f"轉錄失敗（{e.__class__.__name__}）：{e}。做完的段落已存，修好後重跑會接著做。")
     if args.json:
         print(json.dumps(data, ensure_ascii=False))
+    return 0
+
+
+def cmd_progress(args) -> int:
+    from minutes import progress
+
+    folder = Path(args.folder)
+    if args.show_window:
+        return progress.show_window(folder)
+    s = progress.summarize(progress.read(folder))
+    if args.window:
+        opened = s["state"] in (*progress.RUNNING, "error") and progress.launch_window(folder)
+        emit(args, {"ok": True, "opened": opened},
+             "已打開進度視窗。" if opened else "沒有正在進行的轉錄，或這台電腦開不了視窗。")
+        return 0
+    emit(args, {"ok": True, **s}, progress.text(s))
     return 0
 
 
@@ -199,7 +221,8 @@ def cmd_install(args) -> int:
 
 
 COMMANDS = {"install": cmd_install, "version": cmd_version, "check": cmd_check, "scan": cmd_scan, "new": cmd_new,
-            "transcribe": cmd_transcribe, "word-status": cmd_word_status, "render": cmd_render}
+            "transcribe": cmd_transcribe, "progress": cmd_progress, "word-status": cmd_word_status,
+            "render": cmd_render}
 
 
 def main(argv: list[str] | None = None) -> int:

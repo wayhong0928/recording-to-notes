@@ -26,7 +26,7 @@ MODELS = {
     # 聯發科 Breeze-ASR-25（台灣華語、中英夾雜）的社群 CT2 轉檔版。本來就輸出正體，
     # 再轉一次只會改錯字（10-07 測試集 1152 字裡，轉換改了 3 個字，3 個都改錯：最多只能→最多隻能）
     "breeze": Model("breeze", "phate334/Breeze-ASR-25-ct2", 2.9, "預設，台灣口音和中英夾雜比較準", simplified=False),
-    "turbo": Model("turbo", "mobiuslabsgmbh/faster-whisper-large-v3-turbo", 1.5, "快速模式"),
+    "turbo": Model("turbo", "dropbox-dash/faster-whisper-large-v3-turbo", 1.5, "快速模式"),
     "large-v3": Model("large-v3", "Systran/faster-whisper-large-v3", 2.9, "OpenAI 原版"),
 }
 

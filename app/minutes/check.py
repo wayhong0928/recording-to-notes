@@ -83,7 +83,7 @@ def add_gpu_dlls() -> None:
 def gpu_status() -> tuple[bool, str, str]:
     """回傳（能不能用 GPU、說明、怎麼修）。不能用時，說明只寫原因，「用 CPU」由呼叫的地方加。"""
     if sys.platform != "win32":
-        return False, "v0.1.0 只有 Windows 用顯卡加速", ""
+        return False, "目前只有 Windows 用顯卡加速", ""
     gpu = nvidia_info()
     if gpu is None:
         return False, "沒有 NVIDIA 顯卡", ""
