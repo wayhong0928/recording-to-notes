@@ -74,5 +74,24 @@ def test_shortcut_points_to_workspace(home, tmp_path):
     log = installer.Log(home)
     installer.make_shortcut(log, desk)
     log.close()
-    assert (desk / "會議紀錄.lnk").is_file()
-    assert paths.workspace().name == "會議紀錄"
+    if installer.ansi_ok(desk, paths.workspace()):
+        assert (desk / "會議紀錄.lnk").is_file()
+    else:
+        # 英文語系的 Windows（例如 GitHub Actions）：只說明一句，不能誤報成功
+        assert not (desk / "會議紀錄.lnk").exists()
+        assert "系統語系不支援" in (home / "logs" / "install.log").read_text(encoding="utf-8")
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows 的捷徑")
+def test_shortcut_failure_not_reported_as_success(home, tmp_path, monkeypatch):
+    # 舊捷徑還在、這次建捷徑的指令沒有作用時，不能因為檔案存在就說已建立
+    desk = tmp_path / "桌面"
+    desk.mkdir()
+    (desk / "會議紀錄.lnk").write_text("舊的")
+    monkeypatch.setattr(installer, "ansi_ok", lambda *a: True)
+    monkeypatch.setattr(installer.subprocess, "run", lambda *a, **k: None)
+    log = installer.Log(home)
+    installer.make_shortcut(log, desk)
+    log.close()
+    text = (home / "logs" / "install.log").read_text(encoding="utf-8")
+    assert "已建立" not in text and "沒建成功" in text

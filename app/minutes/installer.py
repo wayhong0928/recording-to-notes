@@ -160,11 +160,29 @@ def desktop_dir() -> Path:
     return Path.home() / "Desktop"
 
 
+def ansi_ok(*items: Path) -> bool:
+    """WScript.Shell 的捷徑只認系統語系的字碼頁（繁中 Windows 是 cp950），編不了的路徑會靜靜存檔失敗。"""
+    if sys.platform != "win32":
+        return True
+    import ctypes
+
+    try:
+        for p in items:
+            str(p).encode(f"cp{ctypes.windll.kernel32.GetACP()}")
+    except (UnicodeEncodeError, LookupError):
+        return False
+    return True
+
+
 def make_shortcut(log: Log, desktop: Path | None = None) -> None:
     ws = paths.workspace()
     desktop = desktop or desktop_dir()
     if sys.platform == "win32":
         lnk = desktop / "會議紀錄.lnk"
+        if not ansi_ok(lnk, ws):
+            log(f"  桌面捷徑：這台 Windows 的系統語系不支援路徑裡的文字（例如英文語系的 Windows），捷徑建不了，直接打開 {ws} 就好。")
+            return
+        lnk.unlink(missing_ok=True)  # 先刪舊的，才分得出這次有沒有建成功
         q = lambda p: str(p).replace("'", "''")  # PowerShell 單引號字串裡的 ' 要寫兩次
         ps = (f"$s=(New-Object -ComObject WScript.Shell).CreateShortcut('{q(lnk)}');"
               f"$s.TargetPath='{q(ws)}';$s.Save()")
