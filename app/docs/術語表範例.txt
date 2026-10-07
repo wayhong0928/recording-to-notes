@@ -1,0 +1,1 @@
+本次會議討論語音轉文字工具的導入，提到 faster-whisper、Breeze-ASR-25、large-v3、GitHub、Python、Markdown、Word。

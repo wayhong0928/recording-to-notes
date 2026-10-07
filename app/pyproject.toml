@@ -1,0 +1,42 @@
+[project]
+name = "minutes"
+version = "0.1.0"
+description = "會議紀錄小幫手：本機把錄音轉成逐字稿，交給 Claude 整理成會議紀錄"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "faster-whisper==1.2.1",
+    # RTX 50 系列要 4.5 以上
+    "ctranslate2>=4.5",
+    # 19 以上的版本相容性沒測過（需求第 7 節）
+    "av>=16,<19",
+    "opencc-python-reimplemented==0.1.7",
+    "docxtpl==0.20.2",
+    "python-docx==1.2.0",
+]
+
+[project.optional-dependencies]
+# NVIDIA 顯卡用：pip 版的 cuBLAS、cuDNN，不用另外裝 CUDA。Mac 一律 CPU
+gpu = [
+    "nvidia-cublas-cu12; sys_platform == 'win32'",
+    "nvidia-cudnn-cu12>=9,<10; sys_platform == 'win32'",
+]
+
+[project.scripts]
+minutes = "minutes.cli:main"
+
+[dependency-groups]
+dev = [
+    "markdown>=3.11",
+    "pytest>=8",
+]
+
+[build-system]
+requires = ["uv_build>=0.11,<0.12"]
+build-backend = "uv_build"
+
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

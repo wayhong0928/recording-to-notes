@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>會議紀錄小幫手 使用說明</title>
+<style>
+body { font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif; line-height: 1.75;
+       max-width: 820px; margin: 0 auto; padding: 24px 16px 80px; color: #1f2328; background: #fff; }
+h1 { font-size: 1.9em; border-bottom: 2px solid #d0d7de; padding-bottom: .3em; }
+h1.page { margin-top: 2.4em; }
+h2 { font-size: 1.35em; margin-top: 1.8em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; display: block; overflow-x: auto; }
+th, td { border: 1px solid #d0d7de; padding: 6px 10px; text-align: left; vertical-align: top; }
+th { background: #f6f8fa; }
+code { background: #f6f8fa; padding: .1em .35em; border-radius: 4px; font-size: .92em; }
+blockquote { margin: 1em 0; padding: .4em 1em; border-left: 4px solid #d4a72c; background: #fff8c5; }
+nav { background: #f6f8fa; border-radius: 8px; padding: 12px 20px; }
+nav a { margin-right: 1.2em; }
+a { color: #0969da; }
+@media (prefers-color-scheme: dark) {
+  body { color: #e6edf3; background: #0d1117; }
+  th, code, nav { background: #161b22; }
+  th, td { border-color: #30363d; }
+  blockquote { background: #2d2a1a; }
+  a { color: #4493f8; }
+}
+</style>
+</head>
+<body>
+<p><strong>會議紀錄小幫手</strong> 使用說明</p>
+<nav><a href="#page-使用流程">使用流程</a> <a href="#page-安裝">安裝</a> <a href="#page-資料流向">資料流向</a> <a href="#page-常見問題">常見問題</a></nav>
+<h1 id="page-使用流程" class="">使用流程</h1>
+<h2>每場會議要做的事</h2>
+<ol>
+<li>把會議錄音放進工作區的 <strong><code>錄音放這裡</code></strong> 資料夾。一場會議錄成好幾段也沒關係，全部放進去。</li>
+<li>在 Claude Code 打開工作區（<code>會議紀錄</code> 資料夾）。</li>
+<li>終端機版：在工作區資料夾打開終端機，輸入 <code>claude</code>。</li>
+<li>桌面版：Code 分頁選工作區資料夾。（桌面版還沒實際測過。）</li>
+<li>輸入 <strong><code>/會議紀錄</code></strong>。</li>
+<li>回答 Claude 的幾個問題，等它做完，Word 會自動打開。</li>
+</ol>
+<h2>Claude 會問什麼</h2>
+<ul>
+<li><strong>是哪幾段錄音</strong>：Claude 會用表格列出錄音的日期、開始時間、長度、和上一段隔多久。錄音依開始時間分組，有好幾組時預設選最新的一組。</li>
+<li>同一天的錄音預設算同一場會議。兩段之間空了 1 小時以上，Claude 會問一句是不是同一場。</li>
+<li>過了午夜才結束的會議（例如 23:00 開始、隔天 00:30 結束），兩段之間不到 1 小時，算同一場。</li>
+<li><strong>會議名稱</strong>。</li>
+<li><strong>有沒有與會者名單或專有名詞</strong>：選填。直接打在對話裡就好，逐字稿的人名和術語會比較準。</li>
+<li><strong>有沒有自己開會時記的筆記或初稿</strong>：選填。可以貼進對話，或給檔案位置。筆記和錄音對不上的地方，以錄音為準，Claude 會在對話裡列出來。</li>
+<li><strong>會議紀錄要存在哪裡</strong>：沒特別說就存在工作區的 <code>會議</code> 資料夾。</li>
+</ul>
+<h2>轉逐字稿要多久</h2>
+<p>錄音在你的電腦上轉，不上傳。在開發用的電腦上量到的速度（錄音長度的幾倍）：</p>
+<table>
+<thead>
+<tr>
+<th>電腦</th>
+<th>速度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>有 NVIDIA 顯示卡（RTX 5060 Laptop）</td>
+<td>約 0.07 倍，1 小時的錄音約 4 分鐘</td>
+</tr>
+<tr>
+<td>同一台只用 CPU</td>
+<td>約 0.6 倍，1 小時的錄音約 36 分鐘</td>
+</tr>
+</tbody>
+</table>
+<p>沒有獨立顯示卡的一般筆電沒測過，可能比錄音本身還久。轉的時候可以先去做別的事。</p>
+<h2>做出來的檔案</h2>
+<p>每場會議一個資料夾，例如 <code>會議\2026-10-06_週會\</code>：</p>
+<table>
+<thead>
+<tr>
+<th>檔案</th>
+<th>內容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>語音 ….m4a</code></td>
+<td>原始錄音，從「錄音放這裡」搬過來，檔名不變</td>
+</tr>
+<tr>
+<td><code>0_名單與術語.txt</code></td>
+<td>你給的名單和術語（有給才有）</td>
+</tr>
+<tr>
+<td><code>0_我的筆記.md</code></td>
+<td>你給的筆記（有給才有）</td>
+</tr>
+<tr>
+<td><code>1_逐字稿.md</code></td>
+<td>多段錄音合併的逐字稿，時間是實際的時鐘時間</td>
+</tr>
+<tr>
+<td><code>2_會議紀錄.md</code></td>
+<td>Claude 整理的會議紀錄，內容以這份為準</td>
+</tr>
+<tr>
+<td><code>2_會議紀錄_年月日時分秒.docx</code></td>
+<td>從上面那份產生的 Word，每次產生一份新檔，舊的不刪</td>
+</tr>
+<tr>
+<td><code>_暫存\</code></td>
+<td>每段錄音的轉錄結果、Claude 寫的第一版原稿，平常不用管</td>
+</tr>
+</tbody>
+</table>
+<p>會議紀錄的格式是問答式：開頭是專案名稱、會議時間、與會人員這些欄位（只有會議名稱會自動填，其他留給你填），接著是會議內容、決議事項、討論事項。Word 裡不放逐字稿的時間，也不加「待確認」這類註記。聽不清楚、看不出是誰說的地方，Claude 會在對話裡逐條列出來給你確認；要找原句可以問 Claude，或打開 <code>1_逐字稿.md</code> 看。</p>
+<h2>要修改會議紀錄</h2>
+<ul>
+<li>直接在對話裡跟 Claude 說要改哪裡，它會改好再產生一份新的 Word。</li>
+<li>你已經在 Word 裡改過了：把改過的段落複製貼給 Claude。Claude 不會自己讀 Word 的修改，所以沒貼過來的話，新版 Word 不會有那些修改；它發現你改過上一版時會提醒一次。</li>
+</ul>
+<h2>權限詢問</h2>
+<p>Claude Code 要執行程式或寫檔案之前，會先問你允不允許。<code>/會議紀錄</code> 第一次用時會問好幾次：</p>
+<ul>
+<li>選 <strong>「Yes, and don't ask again …」</strong>（允許，而且這個資料夾以後不用再問），之後就不會再問同樣的事。</li>
+<li>只選「Yes」也可以，但下次同樣的步驟會再問。</li>
+</ul>
+<p>會議紀錄存到工作區以外的地方時，可能會多問幾次。</p>
+<h2>名單和術語怎麼寫</h2>
+<p>工作區裡的 <code>術語表範例.txt</code> 是名單和術語的寫法範例：一行一個，或寫成一段描述。每場會議的名單和術語不一樣，Claude 問的時候直接打在對話裡最快，它會存成會議資料夾裡的 <code>0_名單與術語.txt</code>。</p>
+<h1 id="page-安裝" class="page">安裝</h1>
+<h2>需要準備的</h2>
+<ul>
+<li><strong>Claude Code</strong>，用付費方案（Pro 以上）的帳號登入。安裝方式見 <a href="https://code.claude.com/docs">Claude Code 官方說明</a>。</li>
+<li>硬碟空間約 6 GB：程式和套件約 1 GB，語音辨識模型約 3 GB，有 NVIDIA 顯示卡再加約 1.5 GB。</li>
+<li>安裝時要連網路，之後轉逐字稿不用網路。</li>
+<li>Word（選用）。沒有 Word 一樣會產生 docx，只是不會自動打開。</li>
+</ul>
+<h2>Windows</h2>
+<ol>
+<li>到 GitHub 頁面按 <strong>Code → Download ZIP</strong>，下載後按右鍵「解壓縮全部」。</li>
+<li>打開解壓縮出來的資料夾，雙擊 <strong><code>安裝（Windows）.bat</code></strong>。</li>
+<li>跳出藍色的「Windows 已保護您的電腦」：按「其他資訊」→「仍要執行」。這是因為檔案從網路下載、沒有數位簽章。</li>
+<li>視窗會先列出這台電腦的狀況（顯示卡、硬碟空間、網路、有沒有 Word 和 Claude Code），再列出接下來要裝什麼。確認沒問題就按 Enter。</li>
+<li>等它跑完。第一次要下載約 3 GB 的模型，視網路速度要幾分鐘到半小時。最後會用一小段電腦合成的語音試跑一次，看到「安裝完成」就好了。</li>
+</ol>
+<p>中途失敗或關掉視窗都沒關係，再雙擊一次安裝檔就好。已經下載好的模型不會重新下載，下載到一半的會接著下載。</p>
+<p>有 NVIDIA 顯示卡時會自動裝加速套件，不用另外裝 CUDA。驅動太舊的話，安裝檔會提醒你去更新，這次先用 CPU 裝；更新完再跑一次安裝檔就會改用顯示卡。</p>
+<h2>Mac</h2>
+<blockquote>
+<p>Mac 版照同樣的設計寫好了，但<strong>還沒在 Mac 上實際裝過</strong>，有問題請回報。</p>
+</blockquote>
+<ol>
+<li>下載 ZIP、解壓縮。</li>
+<li>雙擊 <strong><code>安裝（Mac）.command</code></strong>。</li>
+<li>被擋下來說「無法打開」：打開「終端機」，輸入 <code>bash</code> （後面有空格），把 <code>安裝（Mac）.command</code> 拖進終端機視窗，按 Enter。</li>
+<li>之後跟 Windows 一樣：看檢查結果、按 Enter、等它跑完。</li>
+</ol>
+<p>Mac 一律用 CPU 轉逐字稿。Apple Silicon 的 Mac 可能要 macOS 14 以上，因為讀錄音的套件只提供 macOS 14 以上的現成版本（沒實測）。</p>
+<h2>裝了什麼、放在哪</h2>
+<table>
+<thead>
+<tr>
+<th>東西</th>
+<th>Windows</th>
+<th>Mac</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>程式、Python 環境、模型、安裝記錄</td>
+<td><code>%LOCALAPPDATA%\MeetingMinutes\</code></td>
+<td><code>~/Library/Application Support/MeetingMinutes/</code></td>
+</tr>
+<tr>
+<td>工作區（錄音和會議紀錄都在這裡）</td>
+<td><code>C:\Users\&lt;你的名稱&gt;\會議紀錄\</code></td>
+<td><code>~/會議紀錄/</code></td>
+</tr>
+<tr>
+<td>桌面捷徑</td>
+<td>「會議紀錄」，打開工作區</td>
+<td>同左</td>
+</tr>
+</tbody>
+</table>
+<p>安裝檔還會在使用者資料夾裝一個叫 uv 的小工具（用來裝 Python 套件），不會動到你電腦原本的 Python。</p>
+<p>安裝記錄在程式資料夾的 <code>logs\install.log</code>，出問題時可以看這份。</p>
+<h2>更新</h2>
+<p>下載新版的 ZIP，再雙擊一次安裝檔。程式會換成新版，模型和工作區裡的錄音、會議紀錄都不動。</p>
+<p>工作區裡的 <code>/會議紀錄</code> 設定也會換成新版。你改過整理規則的話，舊的會先備份成 <code>整理規則.舊.md</code>。</p>
+<h2>移除</h2>
+<ol>
+<li>刪掉程式資料夾（上表第一列）。</li>
+<li>工作區裡是你的錄音和會議紀錄，要不要刪自己決定。</li>
+<li>刪掉桌面的「會議紀錄」捷徑。</li>
+</ol>
+<h1 id="page-資料流向" class="page">資料流向</h1>
+<table>
+<thead>
+<tr>
+<th>步驟</th>
+<th>在哪裡做</th>
+<th>會不會離開你的電腦</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>錄音轉逐字稿</td>
+<td>你的電腦（faster-whisper 加上 Breeze 模型）</td>
+<td><strong>不會</strong>。錄音不上傳</td>
+</tr>
+<tr>
+<td>整理成會議紀錄</td>
+<td>Claude（Anthropic 的雲端服務）</td>
+<td><strong>會</strong>。逐字稿、你給的名單、術語和筆記會送到 Claude</td>
+</tr>
+<tr>
+<td>產生 Word</td>
+<td>你的電腦</td>
+<td>不會</td>
+</tr>
+</tbody>
+</table>
+<p>安裝時會從網路下載程式套件（PyPI）和語音辨識模型（Hugging Face），只有下載，不會上傳你的資料。</p>
+<h2>處理客戶或公司的會議之前</h2>
+<p>整理那一步會把會議內容送到 Claude。客戶會議、公司內部會議能不能這樣處理，要先問過公司或客戶的規定，例如：</p>
+<ul>
+<li>能不能用私人電腦處理工作的會議錄音。</li>
+<li>能不能用私人的 Claude 帳號處理工作內容。</li>
+<li>公司有沒有指定能用的 AI 服務。</li>
+</ul>
+<p>錄音存在 OneDrive、iCloud 這類會同步到雲端的資料夾時，錄音也會跟著上傳到那個雲端。工作區預設放在使用者資料夾底下的 <code>會議紀錄</code>，不在「文件」或「桌面」裡，就是為了避開這種同步；指定存到其他位置時，Claude 會先提醒。</p>
+<h1 id="page-常見問題" class="page">常見問題</h1>
+<h2>安裝</h2>
+<p><strong>雙擊安裝檔後出現「Windows 已保護您的電腦」</strong>
+按「其他資訊」→「仍要執行」。檔案從網路下載又沒有數位簽章時，Windows 都會這樣擋一次。</p>
+<p><strong>Mac 說安裝檔無法打開</strong>
+見<a href="#page-安裝">安裝</a>的 Mac 那節，改用終端機執行。</p>
+<p><strong>安裝檔說 uv 沒裝成功</strong>
+多半是網路被擋（例如公司網路）。換個網路再雙擊一次安裝檔。</p>
+<p><strong>安裝在某一步失敗了</strong>
+畫面上會寫是哪一步、最後幾行錯誤訊息，完整記錄在程式資料夾的 <code>logs\install.log</code>。修好之後再雙擊一次安裝檔，已經下載好的模型不會重新下載。</p>
+<p><strong>顯示卡驅動太舊</strong>
+安裝檔會先用 CPU 裝好。到 NVIDIA 官網或電腦廠商的網站更新驅動，再跑一次安裝檔就會改用顯示卡。RTX 50 系列要支援 CUDA 12.8 以上的驅動。</p>
+<h2>使用</h2>
+<p><strong>輸入 <code>/會議紀錄</code> 沒反應，或說找不到這個指令</strong>
+要在工作區（<code>會議紀錄</code> 資料夾）打開 Claude Code 才叫得出來。在別的資料夾打開是找不到的。</p>
+<p><strong>一直跳權限詢問</strong>
+見<a href="#page-使用流程">使用流程</a>的「權限詢問」：選「Yes, and don't ask again」就不會一直問。</p>
+<p><strong>支援哪些錄音格式</strong>
+m4a、wav 實際測過。mp3、flac、ogg、mp4、webm 應該可以，沒有逐一測過。</p>
+<p><strong>錄音的時間不對、順序排錯</strong>
+程式先看檔名裡的時間（例如 <code>語音 YYMMDD_HHMMSS</code>、<code>YYYYMMDD_HHMMSS</code>），沒有再看檔案裡記錄的時間，最後才看檔案修改時間。後兩種會標「時間不確定」，Claude 會請你確認。複製過的檔案，修改時間可能變成複製當下。</p>
+<p><strong>人名、專有名詞聽錯</strong>
+下次在 Claude 問「有沒有名單或專有名詞」時提供，或在會議資料夾放 <code>0_名單與術語.txt</code>，再請 Claude 重轉。名單太長時，後面的會被截掉，Claude 會告訴你哪些沒用上。</p>
+<p><strong>轉逐字稿中途關掉了</strong>
+跟 Claude 說「接著轉逐字稿」就好。錄音已經搬進會議資料夾，做完的段落也存起來了，只會轉沒做完的。</p>
+<p><strong>顯示卡轉到一半出錯</strong>
+程式會自動改用 CPU 重轉那一段，並告訴你原因。</p>
+<p><strong>會議紀錄的格式想改</strong>
+跟 Claude 說要怎麼改就好。要長期改的話，工作區的 <code>.claude\skills\會議紀錄\</code> 裡有整理規則和格式公版（Windows 上這個資料夾是隱藏的）；重新安裝或更新時，你改過的整理規則會備份成 <code>整理規則.舊.md</code>。</p>
+</body>
+</html>
