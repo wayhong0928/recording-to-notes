@@ -87,7 +87,7 @@ def test_shortcut_failure_not_reported_as_success(home, tmp_path, monkeypatch):
     # 舊捷徑還在、這次建捷徑的指令沒有作用時，不能因為檔案存在就說已建立
     desk = tmp_path / "桌面"
     desk.mkdir()
-    (desk / "會議紀錄.lnk").write_text("舊的")
+    (desk / "會議紀錄.lnk").write_text("舊的", encoding="utf-8")
     monkeypatch.setattr(installer, "ansi_ok", lambda *a: True)
     monkeypatch.setattr(installer.subprocess, "run", lambda *a, **k: None)
     log = installer.Log(home)
