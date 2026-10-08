@@ -41,6 +41,18 @@ def folder(tmp_path):
 
 # ---- 解析規則 ----
 
+def test_blank_template_matches_word_fields():
+    """給使用者的空白範本，欄位和段落要跟 Word 公版對得上，填過的範本才讀得進來。"""
+    md = (paths.templates() / "content" / "會議紀錄範本.md").read_text(encoding="utf-8")
+    names = [ln.split("：")[0] for ln in md.splitlines() if "：" in ln]
+    assert names == list(render.FIELDS)
+    filled = md.replace("會議名稱：", "會議名稱：週會").replace("記錄人：", "記錄人：甲")
+    data = render.parse(filled)
+    assert (data["meeting"], data["recorder"]) == ("週會", "甲")
+    for title in ("## 會議內容", "## 決議事項", "## 討論事項"):
+        assert title in md
+
+
 def test_fields_full_and_half_width_colon():
     data = render.parse("專案名稱：甲\n**會議名稱**: 乙\n- 會議地點 ： 丙\n記錄人：\n")
     assert (data["project"], data["meeting"], data["location"], data["recorder"]) == ("甲", "乙", "丙", "")
@@ -163,7 +175,7 @@ def test_word_status_cli(folder, capsys):
 def test_render_cli_json(folder, capsys):
     assert main(["--json", "render", str(folder), "--no-open"]) == 0
     data = out_json(capsys)
-    assert data["ok"] is True and data["counts"] == {"contents": 3, "decisions": 3, "topics": 2, "questions": 3}
+    assert data["ok"] is True and data["counts"] == {"contents": 3, "decisions": 5, "topics": 2, "questions": 3}
 
 
 def test_cli_errors_have_ok_and_error(tmp_path, capsys):

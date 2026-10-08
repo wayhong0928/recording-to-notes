@@ -10,6 +10,7 @@
 6. 桌面建打開工作區的捷徑
 7. 用系統內建的語音合成一段錄音，試跑轉錄和產生 Word
 """
+import json
 import os
 import shutil
 import subprocess
@@ -141,13 +142,17 @@ def download_model(home: Path, log: Log) -> None:
 def setup_workspace(home: Path, log: Log) -> None:
     code = ("import json; from minutes import workspace; "
             f"print(json.dumps(workspace.setup(minutes={venv_minutes(home).as_posix()!r})))")
-    in_venv(home, code, log)
+    result = json.loads(in_venv(home, code, log).strip().splitlines()[-1])
     ws = paths.workspace()
     for name in ("使用說明.html", "術語表範例.txt"):
         src = home / "app" / "docs" / name
         if src.is_file():
             shutil.copy2(src, ws / name)
     log(f"  工作區：{ws}")
+    if result.get("backups"):
+        log("  你改過的設定已換成新版，改過的內容備份在：")
+        for path in result["backups"]:
+            log(f"    {path}")
 
 
 def desktop_dir() -> Path:
@@ -233,7 +238,7 @@ def trial_run(home: Path, log: Log) -> dict:
             raise InstallError(f"試跑轉錄失敗：{result.get('error')}")
         text = (folder / "1_逐字稿.md").read_text(encoding="utf-8")
         (folder / "2_會議紀錄.md").write_text(
-            (paths.templates() / "content" / "問答式.md").read_text(encoding="utf-8"), encoding="utf-8")
+            (paths.templates() / "content" / "會議紀錄格式.md").read_text(encoding="utf-8"), encoding="utf-8")
         run([exe, "render", folder, "--no-open", "--json"], log)
         if not list(folder.glob("2_會議紀錄_*.docx")):
             raise InstallError("試跑產生 Word 失敗。")

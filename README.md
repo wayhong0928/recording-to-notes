@@ -23,15 +23,23 @@
   請照 https://github.com/wayhong0928/recording-to-notes 的 AGENTS.md 第 1 節，幫我下載並安裝會議紀錄小幫手。
   ```
 
-- **錄音格式**：m4a、wav 實際測過；mp3、flac、ogg、mp4、webm 應該也可以，沒有逐一試過。
+- **錄音格式**：m4a、wav 實際測過；mp3、flac、ogg、mp4、webm 在 Windows 用合成語音測過。
 
 ## 更新
 
 下載新版的 ZIP，再雙擊一次安裝檔。程式會換成新版，模型和工作區裡的錄音、會議紀錄都不動。
 
-工作區裡的 `/會議紀錄` 設定也會換成新版。你改過整理規則（`整理規則.md`、`問答式.md`）的話，舊的會先備份成 `.舊.md`，要保留的內容記得搬回新版。
+工作區裡的 `/會議紀錄` 設定也會換成新版。你改過整理規則（`整理規則.md`、`會議紀錄格式.md`）或 `會議紀錄範本.md` 的話，舊的會先備份成 `.舊.md`，要保留的內容記得搬回新版。
+
+也可以把下面這段貼給 Claude Code 或 Codex，它會照 [AGENTS.md](AGENTS.md) 查最新版、幫你更新，改過的整理規則也會幫你比對新舊版：
+
+```
+請照 https://github.com/wayhong0928/recording-to-notes 的 AGENTS.md 第 2 節，幫我把會議紀錄小幫手更新到最新版。
+```
 
 ## 怎麼用
+
+開會前可以先複製一份工作區的 `會議紀錄範本.md`，填好專案名稱、會議名稱、與會人員、議程，開會時直接記在上面（也可以貼進 Teams 的會議筆記）。會後跑 `/會議紀錄` 時把它給 Claude，填過的欄位就不用再回答。
 
 1. 錄音放進工作區的 `錄音放這裡` 資料夾（工作區在使用者資料夾底下的 `會議紀錄`，桌面有捷徑）。
 2. 在 `會議紀錄` 資料夾打開終端機（Windows 11：資料夾空白處按右鍵 →「在終端機中開啟」），輸入下面這行，開啟 Claude Code：
@@ -122,7 +130,7 @@ uv run minutes version
 |---|---|
 | `安裝（Windows）.bat`、`安裝（Mac）.command` | 確認有 uv，再用 uv 的 Python 跑 `minutes install` |
 | `app/minutes/` | Python 套件 |
-| `app/templates/` | Word 公版、問答式內容公版、整理規則、範例 |
+| `app/templates/` | Word 公版、會議紀錄格式（給 Claude）、會議紀錄範本（給使用者開會前用）、整理規則、範例 |
 | `app/workspace_template/` | 工作區範本，安裝時複製過去，`{{MINUTES}}` 換成程式路徑 |
 | `app/docs/` | 說明文件；`uv run python tools\build_docs.py` 把它們合成 `使用說明.html` |
 | `app/eval/` | 轉錄評測 |
