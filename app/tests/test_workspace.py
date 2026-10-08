@@ -139,7 +139,9 @@ def test_line_endings_only_is_not_an_edit(tmp_path):
     ws = tmp_path / "會議紀錄"
     wsp.setup(ws, MINUTES)
     rules = skill_dir(ws) / "整理規則.md"
-    rules.write_bytes(rules.read_bytes().replace(b"\n", b"\r\n"))
+    # checkout 出來的公版可能是 LF 也可能是 CRLF（Windows 的 autocrlf），換成另一種
+    data = rules.read_bytes()
+    rules.write_bytes(data.replace(b"\r\n", b"\n") if b"\r\n" in data else data.replace(b"\n", b"\r\n"))
 
     assert wsp.setup(ws, MINUTES)["backups"] == []
 
