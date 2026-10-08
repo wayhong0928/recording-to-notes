@@ -2,10 +2,29 @@
 
 把會議錄音變成 Word 會議紀錄。錄音在你自己的電腦上轉成逐字稿，不上傳；再由 Claude 整理成問答式的會議紀錄，產生 Word 檔。
 
-- **下載**：到 [最新版](https://github.com/wayhong0928/recording-to-notes/releases/latest) 下載 `recording-to-notes-v版本.zip`。Windows 和 Mac 用同一個 ZIP。
-- **安裝**：解壓縮，雙擊 `安裝（Windows）.bat`（Mac 是 `安裝（Mac）.command`）。也可以直接跟 Claude Code 或 Codex 說「請下載這個 repo 並安裝」，附上這頁的網址，它會照 [AGENTS.md](AGENTS.md) 裝好。
+## 下載
+
+<p align="center">
+  <a href="https://github.com/wayhong0928/recording-to-notes/releases/latest"><img src="https://img.shields.io/badge/%E4%B8%8B%E8%BC%89-Windows-0078D4?style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDBoMTF2MTFIMHpNMTMgMGgxMXYxMUgxM3pNMCAxM2gxMXYxMUgwek0xMyAxM2gxMXYxMUgxM3oiLz48L3N2Zz4=" alt="下載 Windows 版" width="223"></a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/wayhong0928/recording-to-notes/releases/latest"><img src="https://img.shields.io/badge/%E4%B8%8B%E8%BC%89-Mac-000000?style=for-the-badge&logo=apple&logoColor=white" alt="下載 Mac 版" width="165"></a>
+</p>
+
+<p align="center">兩個按鈕都會到最新版頁面，下載 <code>recording-to-notes-v版本.zip</code>（Windows 和 Mac 是同一個檔案）。</p>
+
+| Windows | Mac |
+|---|---|
+| 1. 下載 ZIP，按右鍵「解壓縮全部」<br>2. 雙擊 `安裝（Windows）.bat`；跳出「Windows 已保護您的電腦」就按「其他資訊」→「仍要執行」<br>3. 看完檢查結果按 Enter，等它跑完 | 1. 下載 ZIP，雙擊解壓縮<br>2. 雙擊 `安裝（Mac）.command`<br>3. 被擋下來說「無法打開」，照[安裝說明](app/docs/安裝.md#mac)用終端機開<br><sub>Mac 版還沒在實機上裝過，有問題請回報</sub> |
+
 - **需要**：[Claude Code](https://code.claude.com/docs)，用付費方案（Pro 以上）的帳號登入。
-- **錄音格式**：m4a、wav 實際測過；mp3、flac、ogg、mp4、webm 應該可以，沒有逐一測過。
+- **讓 AI 幫你裝**：跟 Claude Code 或 Codex 說「請下載這個 repo 並安裝」，附上這頁的網址，它會照 [AGENTS.md](AGENTS.md) 裝好。
+- **錄音格式**：m4a、wav 實際測過；mp3、flac、ogg、mp4、webm 應該也可以，沒有逐一試過。
+
+## 更新
+
+下載新版的 ZIP，再雙擊一次安裝檔。程式會換成新版，模型和工作區裡的錄音、會議紀錄都不動。
+
+工作區裡的 `/會議紀錄` 設定也會換成新版。你改過整理規則（`整理規則.md`、`問答式.md`）的話，舊的會先備份成 `.舊.md`，要保留的內容記得搬回新版。
 
 ## 怎麼用
 
@@ -15,35 +34,17 @@
 
 一場會議錄成好幾段沒關係，程式會依錄音的開始時間排好、合併。轉逐字稿時會跳出進度視窗，轉完自己關掉。要修改就在對話裡跟 Claude 說，它會產生新一版 Word，舊的留著。
 
-已經裝過舊版的，下載新版再雙擊一次安裝檔就好，模型和會議紀錄都不動（見[安裝](app/docs/安裝.md)的「更新」）。
-
 詳細說明在 `app\docs\`，安裝後工作區也有一份 `使用說明.html`：
 
 - [使用流程](app/docs/使用流程.md)：Claude 會問什麼、產出哪些檔案、怎麼修改、權限詢問怎麼選
 - [安裝](app/docs/安裝.md)：需要準備什麼、裝在哪裡、更新和移除
 - [資料流向](app/docs/資料流向.md)：哪些資料會離開你的電腦
 - [常見問題](app/docs/常見問題.md)
+- [測試範圍](app/docs/測試範圍.md)：測過哪些環境、哪些還沒測
 
 ## 資料會送到哪裡
 
 錄音只在你的電腦上轉逐字稿。**整理成會議紀錄那一步會把逐字稿送到 Claude（Anthropic 的雲端服務）。** 處理客戶或公司的會議之前，先確認公司和客戶的規定允許這樣做。詳見[資料流向](app/docs/資料流向.md)。
-
-## 測試範圍
-
-只在一台 Windows 11 筆電（RTX 5060 Laptop）上測過：
-
-- 安裝檔從頭到尾實際跑過（含顯示卡加速套件、合成語音試跑），重跑一次也沒問題。
-- 在終端機版 Claude Code 跑 `/會議紀錄`：三段手機錄音（共約 1 小時 40 分）合併轉逐字稿、整理成會議紀錄、產生 Word。
-- 進度視窗（v0.2.0）：5.6 分鐘的合成語音用 CPU 轉，視窗有跳出、會更新、轉完自己關掉；有開視窗和沒開視窗各轉兩次，速度沒有差別。
-- 單元測試涵蓋錄音分組（含跨午夜）、合併、Word 產生、Word 被改過的提醒、顯示卡失敗改用 CPU、轉錄進度等。GitHub Actions 在 Windows 和 Mac 上跑單元測試，另外各試開一次進度視窗（只記錄結果，失敗不擋）。
-
-**沒有測過**：
-
-- Mac 的安裝和使用（安裝檔照同樣設計寫好，但沒在 Mac 上跑過）。Mac 上的進度視窗沒在真的 Mac 上用過，只有 GitHub Actions 自動試開；開不起來時轉錄照跑，可以直接問 Claude 轉到哪了。
-- Claude 桌面版（Code 分頁）：權限詢問會跳幾次、長時間的背景轉錄會不會中斷。
-- 沒有獨立顯示卡的一般筆電的速度。
-- Windows 帳號名稱是中文的電腦：程式資料夾、工作區、安裝檔放在中文路徑底下都測過，但使用者資料夾本身是中文名稱時，uv 會裝到哪裡、`%USERPROFILE%\.local\bin` 那一段沒測。
-- 從 GitHub 下載的 ZIP 被 SmartScreen 攔下的實際畫面、模型下載中斷後接著下載。
 
 ## 用到的套件與模型
 
