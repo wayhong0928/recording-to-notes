@@ -17,7 +17,12 @@
 | 1. 下載 ZIP，按右鍵「解壓縮全部」<br>2. 雙擊 `安裝（Windows）.bat`；跳出「Windows 已保護您的電腦」就按「其他資訊」→「仍要執行」<br>3. 看完檢查結果按 Enter，等它跑完 | 1. 下載 ZIP，雙擊解壓縮<br>2. 雙擊 `安裝（Mac）.command`<br>3. 被擋下來說「無法打開」，照[安裝說明](app/docs/安裝.md#mac)用終端機開<br><sub>Mac 版還沒在實機上裝過，有問題請回報</sub> |
 
 - **需要**：[Claude Code](https://code.claude.com/docs)，用付費方案（Pro 以上）的帳號登入。
-- **讓 AI 幫你裝**：跟 Claude Code 或 Codex 說「請下載這個 repo 並安裝」，附上這頁的網址，它會照 [AGENTS.md](AGENTS.md) 裝好。
+- **讓 AI 幫你裝**：把下面這段貼給 Claude Code 或 Codex，它會照 [AGENTS.md](AGENTS.md) 裝好。
+
+  ```
+  請照 https://github.com/wayhong0928/recording-to-notes 的 AGENTS.md 第 1 節，幫我下載並安裝會議紀錄小幫手。
+  ```
+
 - **錄音格式**：m4a、wav 實際測過；mp3、flac、ogg、mp4、webm 應該也可以，沒有逐一試過。
 
 ## 更新
